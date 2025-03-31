@@ -73,6 +73,7 @@ public class BotService(ITelegramBotClient client, BotData botData, LiteContext 
                         {
                             await client.SendMessage(botData.ChannelId, entity.ToString());
                             context.News.Insert(entity);
+                            Log.ForContext<BotService>().Information("Добавлена новость {url}", $"{FollowinParser.SiteUrl}/en/feed/{entity.Id}");
                         }
                     }
                     catch (Exception e)
