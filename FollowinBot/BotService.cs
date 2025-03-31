@@ -11,6 +11,7 @@ public class BotService(ITelegramBotClient client, BotData botData, LiteContext 
     private Task? _task;
     private CancellationTokenSource? _cts;
     private HashSet<string> _skip = [];
+    private Random _random = new();
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -90,7 +91,7 @@ public class BotService(ITelegramBotClient client, BotData botData, LiteContext 
             {
                 if (!_cts.Token.IsCancellationRequested)
                 {
-                    await Task.Delay(500, _cts.Token);
+                    await Task.Delay(TimeSpan.FromSeconds(_random.Next(1, 4)), _cts.Token);
                 }
             }
         }

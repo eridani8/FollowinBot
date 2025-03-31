@@ -33,6 +33,8 @@ public class FollowinParser(CookieJar cookie)
             .GetParse();
         if (parse is null) return null;
         
+        Log.ForContext<BotService>().Information("Получение новостей...");
+        
         var news = new List<NewsEntity>();
         var xPaths =
             parse.GetXPaths(
