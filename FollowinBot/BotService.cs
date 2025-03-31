@@ -71,7 +71,11 @@ public class BotService(ITelegramBotClient client, BotData botData, LiteContext 
                     {
                         await client.SendMessage(botData.ChannelId, entity.ToString());
                         _skip.Add(entity.Id);
-                        context.News.Insert(entity);
+                        if (!context.News.Exists(n => n.Id == entity.Id))
+                        {
+                            _skip.Add(entity.Id);
+                            context.News.Insert(entity);
+                        }
                     }
                     catch (Exception e)
                     {

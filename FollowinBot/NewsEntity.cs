@@ -5,7 +5,7 @@ namespace FollowinBot;
 
 public class NewsEntity
 {
-    public required string Id { get; init; }
+    [BsonId] public required string Id { get; init; }
     [BsonIgnore] public required string? Title { get; init; }
     [BsonIgnore] public required string? Text { get; init; }
 
