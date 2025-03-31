@@ -2,6 +2,7 @@
 using Serilog;
 using Serilog.Events;
 using DotNetEnv;
+using Flurl.Http;
 using FollowinBot;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
@@ -42,10 +43,13 @@ try
     
     builder.Services.AddSerilog();
     builder.Services.AddSingleton<ITelegramBotClient, TelegramBotClient>(_ => new TelegramBotClient(botToken));
-    builder.Services.AddSingleton<Context>();
+    builder.Services.AddSingleton<LiteContext>();
+    builder.Services.AddSingleton<CookieJar>();
+    builder.Services.AddSingleton<FollowinParser>();
+    builder.Services.AddHostedService<BotService>();
     
     var host = builder.Build();
-
+    
     await host.RunAsync();
 }
 catch (Exception e)
