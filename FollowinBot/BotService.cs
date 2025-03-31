@@ -64,16 +64,14 @@ public class BotService(ITelegramBotClient client, BotData botData, LiteContext 
                     continue;
                 }
 
-                foreach (var entity in update)
+                foreach (var entity in update.Reverse())
                 {
                     if (_cts.Token.IsCancellationRequested) break;
                     try
                     {
-                        await client.SendMessage(botData.ChannelId, entity.ToString());
-                        _skip.Add(entity.Id);
-                        if (!context.News.Exists(n => n.Id == entity.Id))
+                        if (_skip.Add(entity.Id))
                         {
-                            _skip.Add(entity.Id);
+                            await client.SendMessage(botData.ChannelId, entity.ToString());
                             context.News.Insert(entity);
                         }
                     }

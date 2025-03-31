@@ -24,7 +24,7 @@ public class FollowinParser(CookieJar cookie)
         { "upgrade-insecure-requests", "1" }
     };
 
-    public async Task<List<NewsEntity>?> GetNews(HashSet<string> skip)
+    public async Task<IEnumerable<NewsEntity>?> GetNews(HashSet<string> skip)
     {
         var parse = await SiteUrl
             .WithCookies(cookie)
@@ -44,9 +44,9 @@ public class FollowinParser(CookieJar cookie)
                 var aXpath = $"{root}//a[@target='_self']";
                 var url = parse.GetAttributeValue(aXpath);
                 if (string.IsNullOrEmpty(url)) continue;
-                if (skip.Contains(url)) continue;
                 var id = url.Split("/").Last();
                 if (string.IsNullOrWhiteSpace(id)) continue;
+                if (skip.Contains(id)) continue;
 
                 var title = parse.GetInnerText(aXpath);
                 var text = parse.GetInnerText(
