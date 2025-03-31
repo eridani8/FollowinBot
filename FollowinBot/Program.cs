@@ -1,6 +1,10 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using DotNetEnv;
+using FollowinBot;
+using Microsoft.Extensions.DependencyInjection;
+using Telegram.Bot;
 
 const string outputTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss}] [{Level:u3}] {Message:lj}{NewLine}{Exception}";
 var logsPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "logs"));
@@ -21,9 +25,24 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
+    #region env
+
+    Env.Load();
+    
+    var botToken = Environment.GetEnvironmentVariable("BOT_TOKEN");
+
+    if (string.IsNullOrEmpty(botToken))
+    {
+        throw new Exception("Environment variable 'BOT_TOKEN' not set");
+    }
+    
+    #endregion
+    
     var builder = Host.CreateApplicationBuilder();
     
     builder.Services.AddSerilog();
+    builder.Services.AddSingleton<ITelegramBotClient, TelegramBotClient>(_ => new TelegramBotClient(botToken));
+    builder.Services.AddSingleton<Context>();
     
     var host = builder.Build();
 
