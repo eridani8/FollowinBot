@@ -5,12 +5,13 @@ using Telegram.Bot.Types;
 
 namespace FollowinBot;
 
-public class BotService(ITelegramBotClient client, LiteContext context, FollowinParser parser) : IHostedService
+public class BotService(ITelegramBotClient client, BotData botData, LiteContext context, FollowinParser parser)
+    : IHostedService
 {
     private Task? _task;
     private CancellationTokenSource? _cts;
     private HashSet<string> _skip = [];
-    
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         _skip = context.News.FindAll().Select(n => n.Id).ToHashSet();
@@ -28,10 +29,12 @@ public class BotService(ITelegramBotClient client, LiteContext context, Followin
             {
                 await _cts.CancelAsync();
             }
+
             if (_task != null)
             {
                 await Task.WhenAny(_task, Task.Delay(Timeout.Infinite, cancellationToken));
             }
+
             context.Database.Commit();
         }
         finally
@@ -49,6 +52,7 @@ public class BotService(ITelegramBotClient client, LiteContext context, Followin
             Log.ForContext<BotService>().Error("Bot service can not be started");
             return;
         }
+
         await Task.Delay(3000, _cts.Token);
         while (!_cts.Token.IsCancellationRequested)
         {
@@ -59,12 +63,13 @@ public class BotService(ITelegramBotClient client, LiteContext context, Followin
                 {
                     continue;
                 }
+
                 foreach (var entity in update)
                 {
                     if (_cts.Token.IsCancellationRequested) break;
                     try
                     {
-                        await client.SendMessage(new ChatId(-1002615890333), entity.ToString());
+                        await client.SendMessage(botData.ChannelId, entity.ToString());
                         _skip.Add(entity.Id);
                         context.News.Insert(entity);
                     }

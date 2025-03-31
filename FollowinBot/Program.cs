@@ -31,10 +31,11 @@ try
     Env.Load();
     
     var botToken = Environment.GetEnvironmentVariable("BOT_TOKEN");
+    var channelIdStr = Environment.GetEnvironmentVariable("CHANNEL_ID");
 
-    if (string.IsNullOrEmpty(botToken))
+    if (string.IsNullOrEmpty(botToken) || string.IsNullOrEmpty(channelIdStr) || !long.TryParse(channelIdStr, out var channelId))
     {
-        throw new Exception("Environment variable 'BOT_TOKEN' not set");
+        throw new Exception("Need to install environment variables in .env");
     }
     
     #endregion
@@ -42,6 +43,10 @@ try
     var builder = Host.CreateApplicationBuilder();
     
     builder.Services.AddSerilog();
+    builder.Services.AddSingleton<BotData>(_ => new BotData()
+    {
+        ChannelId = channelId,
+    });
     builder.Services.AddSingleton<ITelegramBotClient, TelegramBotClient>(_ => new TelegramBotClient(botToken));
     builder.Services.AddSingleton<LiteContext>();
     builder.Services.AddSingleton<CookieJar>();
