@@ -6,7 +6,8 @@ namespace FollowinBot;
 
 public class FollowinParser(CookieJar cookie)
 {
-    public const string SiteUrl = "https://followin.io/en/news";
+    public const string BaseSiteUrl = "https://followin.io";
+    public const string SiteUrl = $"{BaseSiteUrl}/en/news";
 
     private static readonly Dictionary<string, string> Headers = new()
     {
