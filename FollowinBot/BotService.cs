@@ -91,7 +91,7 @@ public class BotService(ITelegramBotClient client, BotData botData, LiteContext 
             {
                 if (!_cts.Token.IsCancellationRequested)
                 {
-                    await Task.Delay(1000, _cts.Token);
+                    await Task.Delay(500, _cts.Token);
                 }
             }
         }
