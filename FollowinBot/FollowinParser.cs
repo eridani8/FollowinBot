@@ -35,31 +35,25 @@ public class FollowinParser(CookieJar cookie)
         if (parse is null) return null;
         
         Log.ForContext<BotService>().Information("Обновление новостной ленты...");
-        
+        var now = DateTime.Now;
         var news = new List<NewsEntity>();
-        var xPaths =
+        var newsItems =
             parse.GetXPaths(
                 "//div[@class='infinite-scroll-component__outerdiv']/div/div/div");
-        foreach (var root in xPaths)
+        foreach (var item in newsItems)
         {
             try
             {
-                var aXpath = $"{root}//a[@target='_self']";
-                var url = parse.GetAttributeValue(aXpath);
-                if (string.IsNullOrEmpty(url)) continue;
-                var id = url.Split("/").Last();
-                if (string.IsNullOrWhiteSpace(id)) continue;
-                if (skip.Contains(id)) continue;
-
-                var title = parse.GetInnerText(aXpath);
-                var text = parse.GetInnerText(
-                    $"{root}//div[contains(@class, 'text-14') and contains(@class, 'cursor-pointer')]");
-
-                news.Add(new NewsEntity()
-                {
-                    Id = id,
+                var url = BaseSiteUrl + parse.GetAttributeValue($"{item}//a[@target='_self']");
+                if (string.IsNullOrEmpty(url) || url.EndsWith(BaseSiteUrl)) continue;
+                if (skip.Contains(url)) continue;
+                var title = parse.GetInnerText($"{item}//a[@target='_self']");
+                if (string.IsNullOrEmpty(title)) continue;
+                news.Add(new NewsEntity 
+                { 
+                    Id = url, 
                     Title = title,
-                    Text = text,
+                    EndCache = now.AddMinutes(30)
                 });
             }
             catch (Exception e)
