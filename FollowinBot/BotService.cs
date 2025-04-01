@@ -71,7 +71,8 @@ public class BotService(ITelegramBotClient client, BotData botData, LiteContext 
                         if (hasSimilar) continue;
                         if (_skip.Add(entity.Id) && _cache.Add(entity))
                         {
-                            await client.SendMessage(botData.ChannelId, entity.ToString(), linkPreviewOptions: false);
+                            await client.SendMessage(botData.ChannelId, entity.ToString(),
+                                linkPreviewOptions: new LinkPreviewOptions() { IsDisabled = true });
                             context.News.Insert(entity);
                             Log.ForContext<BotService>().Information("Добавлено в телеграм: {url}", $"{FollowinParser.BaseSiteUrl}/en/feed/{entity.Id}");
                         }

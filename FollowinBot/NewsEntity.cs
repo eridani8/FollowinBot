@@ -7,7 +7,7 @@ public class NewsEntity
 {
     [BsonId] public required string Id { get; init; }
     [BsonIgnore] public required string Title { get; init; }
-    public DateTime EndCache { get; set; }
+    public DateTime EndCache { get; init; }
     public override string ToString()
     {
         var sb = new StringBuilder();
