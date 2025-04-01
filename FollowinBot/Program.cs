@@ -59,8 +59,6 @@ try
 catch (Exception e)
 {
     Log.Fatal(e, "The application cannot be loaded");
-    Console.WriteLine("Press any key to exit...");
-    Console.ReadKey();
 }
 finally
 {

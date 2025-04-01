@@ -67,7 +67,7 @@ public class BotService(ITelegramBotClient client, BotData botData, LiteContext 
                     if (_cts.Token.IsCancellationRequested) break;
                     try
                     {
-                        var hasSimilar = _cache.ToHashSet().Any(cached => IsSimilar(entity.Title, cached.Title, 0.9));
+                        var hasSimilar = _cache.ToHashSet().Any(cached => IsSimilar(entity.Title, cached.Title, 0.7));
                         if (hasSimilar) continue;
                         if (_skip.Add(entity.Id) && _cache.Add(entity))
                         {
